@@ -42,7 +42,7 @@ def run_script(
         if cell.cell_type == "code":
             if "outputs" in cell:
                 for output in cell["outputs"]:
-                    print(output["text"])
+                    print(output.get("text", ""))
     return run_out
 
 

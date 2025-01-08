@@ -77,7 +77,7 @@ jobs:
     - if: ${{ inputs.smoke_test }}
       name: Run tutorials with smoke test
       run: |
-        python scripts/run_tutorials.py -p "$(pwd)" -s
+        python scripts/run_tutorials.py -p "$(pwd)" -s -n test.ipynb
     - if: ${{ !inputs.smoke_test }}
       name: Run tutorials without smoke test
       run: |

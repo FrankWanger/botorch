@@ -14,6 +14,8 @@ from pathlib import Path
 from subprocess import CalledProcessError
 from typing import Dict, Optional, Tuple
 
+import nbformat
+
 from memory_profiler import memory_usage
 
 
@@ -33,6 +35,14 @@ def run_script(
         env=env,
         timeout=timeout_minutes * 60,
     )
+
+    with open(tutorial) as f:
+        nb = nbformat.read(f, as_version=4)
+    for cell in nb.cells:
+        if cell.cell_type == "code":
+            if "outputs" in cell:
+                for output in cell["outputs"]:
+                    print(output["text"])
     return run_out
 
 

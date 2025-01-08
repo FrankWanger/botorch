@@ -15,8 +15,10 @@ from subprocess import CalledProcessError
 from typing import Dict, Optional, Tuple
 
 import nbformat
+import papermill
 
 from memory_profiler import memory_usage
+from typing_extensions import runtime
 
 
 IGNORE_ALWAYS = set()  # ignored in smoke tests and full runs
@@ -28,13 +30,16 @@ def run_script(
 ) -> None:
     if env is not None:
         env = {**os.environ, **env}
-    run_out = subprocess.run(
-        ["papermill", tutorial, "|"],
-        capture_output=True,
-        text=True,
-        env=env,
-        timeout=timeout_minutes * 60,
+    if env is not None:
+        os.environ.update(env)
+    start = time.monotonic()
+    papermill.execute_notebook(
+        tutorial,
+        tutorial,
+        # This timeout is on cell-execution time, not on total runtime.
+        execution_timeout=timeout_minutes * 60,
     )
+    runtime = time.monotonic() - start
 
     with open(tutorial) as f:
         nb = nbformat.read(f, as_version=4)
@@ -43,7 +48,7 @@ def run_script(
             if "outputs" in cell:
                 for output in cell["outputs"]:
                     print(output.get("text", ""))
-    return run_out
+    return runtime
 
 
 def run_tutorial(
@@ -58,7 +63,7 @@ def run_tutorial(
     print(f"Running tutorial {tutorial.name}.")
     env = {"SMOKE_TEST": "True"} if smoke_test else None
     try:
-        mem_usage, run_out = memory_usage(
+        mem_usage, runtime = memory_usage(
             (run_script, (tutorial, timeout_minutes), {"env": env}),
             retval=True,
             include_children=True,
@@ -69,21 +74,6 @@ def run_tutorial(
             f"{timeout_minutes} minutes."
         )
         return error, {}
-
-    try:
-        run_out.check_returncode()
-    except CalledProcessError:
-        error = "\n".join(
-            [
-                f"Encountered error running tutorial {tutorial.name}:",
-                "stdout:",
-                run_out.stdout,
-                "stderr:",
-                run_out.stderr,
-            ]
-        )
-        return error, {}
-    runtime = time.monotonic() - tic
     performance_info = {
         "runtime": runtime,
         "start_mem": mem_usage[0],

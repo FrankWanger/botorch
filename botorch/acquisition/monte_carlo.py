@@ -602,11 +602,13 @@ class qNoisyExpectedImprovement(
         """
         q = X.shape[-2]
         X_full = torch.cat([match_batch_shape(self.X_baseline, X), X], dim=-2)
+        print(f"get_samples_and_objectives: {X.shape=}, {X_full.shape=}")
         # TODO: Implement more efficient way to compute posterior over both training and
         # test points in GPyTorch (https://github.com/cornellius-gp/gpytorch/issues/567)
         posterior = self.model.posterior(
             X_full, posterior_transform=self.posterior_transform
         )
+        print(f"{posterior._extended_shape()=}")
         if not self._cache_root:
             samples_full = super().get_posterior_samples(posterior)
             samples = samples_full[..., -q:, :]
@@ -622,6 +624,7 @@ class qNoisyExpectedImprovement(
             self._set_sampler(q_in=q_in, posterior=posterior)
             samples = self._get_f_X_samples(posterior=posterior, q_in=q_in)
             obj = self.objective(samples, X=X_full[..., -q:, :])
+            print(f"{samples.shape=}, {obj.shape=}")
 
         return samples, obj
 

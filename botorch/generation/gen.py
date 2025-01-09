@@ -186,14 +186,14 @@ def gen_candidates_scipy(
                     f"{np.isnan(x).sum()} elements of the {x.size} element array "
                     f"`x` are NaN."
                 )
-            # X = (
-            #     torch.from_numpy(x)
-            #     .to(initial_conditions)
-            #     .view(shapeX)
-            #     .contiguous()
-            #     .requires_grad_(True)
-            # )
-            X = torch.tensor(x.reshape(shapeX), dtype=initial_conditions.dtype, device=initial_conditions.device, requires_grad=True)
+            X = (
+                torch.from_numpy(x)
+                .to(initial_conditions)
+                .view(shapeX)
+                .contiguous()
+                .requires_grad_(True)
+            )
+            print(f"{X.shape=}, {X.dtype=}, {X.stride()=}")
             X_fix = fix_features(X, fixed_features=fixed_features)
             loss = f(X_fix).sum()
             # compute gradient w.r.t. the inputs (does not accumulate in leaves)

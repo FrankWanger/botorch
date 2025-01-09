@@ -189,7 +189,7 @@ def gen_candidates_scipy(
             X = (
                 torch.from_numpy(x)
                 .to(initial_conditions)
-                .reshape(shapeX)
+                .view(shapeX)
                 .contiguous()
                 .requires_grad_(True)
             )

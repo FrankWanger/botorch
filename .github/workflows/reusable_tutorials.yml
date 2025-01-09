@@ -38,10 +38,10 @@ jobs:
       env:
         ALLOW_LATEST_GPYTORCH_LINOP: true
       run: |
-        pip install .[tutorials]
+        pip install uv
+        uv pip install .[tutorials] --system
     - name: Install Scipy
       run: |
-        pip install uv
         uv pip install scipy==${{ inputs.scipy_version }} --system
     - name: Run tutorials with smoke test
       run: |

@@ -40,7 +40,9 @@ jobs:
       run: |
         pip install .[tutorials]
     - name: Install Scipy
-      run: pip install scipy==${{ inputs.scipy_version }}
+      run: |
+        pip install uv
+        uv pip install scipy==${{ inputs.scipy_version }}
     - name: Run tutorials with smoke test
       run: |
         python scripts/run_tutorials.py -p "$(pwd)" -s -n test2.ipynb

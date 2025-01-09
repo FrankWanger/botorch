@@ -45,4 +45,4 @@ jobs:
         uv pip install scipy==${{ inputs.scipy_version }} --system
     - name: Run tutorials with smoke test
       run: |
-        python scripts/run_tutorials.py -p "$(pwd)" -s -n test2.ipynb
+        python scripts/run_tutorials.py -p "$(pwd)" -s -n test3.ipynb

@@ -193,7 +193,6 @@ def gen_candidates_scipy(
                 .contiguous()
                 .requires_grad_(True)
             )
-            print(f"{X.shape=}, {X.dtype=}, {X.stride()=}")
             X_fix = fix_features(X, fixed_features=fixed_features)
             loss = f(X_fix).sum()
             # compute gradient w.r.t. the inputs (does not accumulate in leaves)
@@ -243,7 +242,7 @@ def gen_candidates_scipy(
         args=(f,),
         x0=x0,
         # method=options.get("method", "SLSQP" if constraints else "L-BFGS-B"),
-        method="SLSQP",
+        method="L-BFGS-B",
         jac=with_grad,
         bounds=bounds,
         constraints=constraints,

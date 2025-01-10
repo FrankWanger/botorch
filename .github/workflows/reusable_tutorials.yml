@@ -6,6 +6,9 @@ on:
       scipy_version:
         required: true
         type: str
+      test_version:
+        required: true
+        type: str
   workflow_call:
     inputs:
       smoke_test:
@@ -45,4 +48,4 @@ jobs:
         uv pip install scipy==${{ inputs.scipy_version }} --system
     - name: Run tutorials with smoke test
       run: |
-        python scripts/run_tutorials.py -p "$(pwd)" -s -n test2.ipynb
+        python scripts/run_tutorials.py -p "$(pwd)" -s -n test${{ inputs.test_version }}.ipynb

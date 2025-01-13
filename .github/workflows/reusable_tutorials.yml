@@ -48,4 +48,9 @@ jobs:
         uv pip install scipy==${{ inputs.scipy_version }} --system
     - name: Run tutorials with smoke test
       run: |
+        export OMP_NUM_THREADS=1
+        export OPENBLAS_NUM_THREADS=1
+        export MKL_NUM_THREADS=1
+        export VECLIB_MAXIMUM_THREADS=1
+        export NUMEXPR_NUM_THREADS=1
         python scripts/run_tutorials.py -p "$(pwd)" -s -n test${{ inputs.test_version }}.ipynb
